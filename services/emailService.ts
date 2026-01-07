@@ -38,6 +38,35 @@ export const draftAnnouncementEmail = async (event: Event): Promise<string> => {
   }
 };
 
+export const sendEmailViaResend = async (
+  to: string | string[],
+  subject: string,
+  html: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ to, subject, html }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Email send failed:', error);
+      return false;
+    }
+
+    const data = await response.json();
+    console.log('Email sent successfully:', data);
+    return true;
+  } catch (error) {
+    console.error('Error sending email via Resend:', error);
+    return false;
+  }
+};
+
 export const simulateEmailDispatch = async (count: number): Promise<boolean> => {
   // Simulate network latency for bulk send
   return new Promise((resolve) => {
